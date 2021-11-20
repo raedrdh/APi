@@ -1,23 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import UserList from "./component/userlist/UserList";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Spinner } from "react-bootstrap";
+import './App.css'
 
 function App() {
+  const [User, setUser] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const getUserList = async () => {
+    try {
+      const response = await axios.get(
+        `https://jsonplaceholder.typicode.com/users`
+      );
+      setTimeout(function () {
+        setUser(response.data);
+      setLoading(false);
+    }, 2000);
+      
+    } catch (error) {}
+  };
+  useEffect(() => {
+    getUserList();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {loading ? (
+        <div className='load'>
+          <Spinner  animation="border" />
+
+        </div>
+      ) : (
+        <UserList userList={User} />
+      )}
     </div>
   );
 }
